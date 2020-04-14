@@ -1,21 +1,30 @@
 module Enumerable
   def my_each
+    return enum_for unless block_given?
+
+    list = is_a?(Range) ? to_a : self
     i = 0
-    while i < length
-      yield(self[i])
+    while i < list.length
+      yield(list[i])
       i += 1
     end
+    list
   end
 
   def my_each_with_index()
+    return enum_for unless block_given?
+
+    list = is_a?(Range) ? to_a : self
     index = 0
-    each do |_elem|
-      yield(self[index])
+    while index < list.length
+      yield(self[index], index)
       index += 1
     end
   end
 
   def my_select()
+    return enum_for unless block_given?
+
     result = []
     my_each do |elem|
       result << elem if yield(elem)
@@ -23,6 +32,8 @@ module Enumerable
   end
 
   def my_all?
+    return enum_for unless block_given?
+
     my_each do |element|
       return false unless yield(element)
     end
@@ -30,6 +41,8 @@ module Enumerable
   end
 
   def my_any?
+    return enum_for unless block_given?
+
     my_each do |elem|
       return true if yield(elem)
     end
@@ -37,19 +50,26 @@ module Enumerable
   end
 
   def my_none?
+    return enum_for unless block_given?
+
     each do |elem|
       return false if yield(elem)
     end
     true
   end
 
-  def my_count
-    result = 0
-    my_each do |el|
-      result += 1 if yield(el)
-    end
+  def my_count(num = nil)
+    count = 0
+    if num
+      my_each { |element| count += 1 if element == num }
 
-    result
+    elsif !block_given?
+      count = length
+
+    elsif !num
+      my_each { |element| count += 1 if yield element }
+    end
+    count
   end
 
   def my_map(*procs)
@@ -65,33 +85,33 @@ module Enumerable
     result
   end
 
-  def my_inject(*start_num)
-    result = 0
-    if start_num.count.zero?
-      my_each do |num|
-        result = yield(result, num)
-      end
-      result
-    else
-      start_num = start_num[0]
-      my_each do |num|
-        start_num = yield(start_num, num)
-      end
-      start_num
+  def my_inject(*args)
+    list = is_a?(Range) ? to_a : self
+
+    reduce = args[0] if args[0].is_a?(Integer)
+    operator = args[0].is_a?(Symbol) ? args[0] : args[1]
+
+    if operator
+      list.my_each { |item| reduce = reduce ? reduce.send(operator, item) : item }
+      return reduce
     end
+    list.my_each { |item| reduce = reduce ? yield(reduce, item) : item }
+    reduce
   end
 end
 
-def multiply_els(arr)
-  result = 1
-  arr.each do |num|
-    result *= num
-  end
-  result
+def multiply_els(list)
+  list.my_inject(:*)
 end
 
-proc = proc do |num|
-  num * 2
-end
-a = [1, 2, 3, 4]
-puts a.my_map(&proc).inspect
+p %w[a b c].my_each { |x| print x, ' -- ' }
+p (1..3).my_each { |x| print x, ' -- ' }
+p %w[A B C].my_each_with_index { |val, index| puts "Element #{val} is on index #{index}" }
+p [1, 2, 3, 4, 5].my_select(&:even?)
+p [nil, true, 99].my_all?
+p [nil, true, 99].my_any?
+p [nil, false].my_none?
+p [1, 2, 4, 2].my_count(2)
+proc2 = proc { |x| x**3 }
+p [1, 2, 3, 4].map(&proc2)
+p (5..10).my_inject(:*)
