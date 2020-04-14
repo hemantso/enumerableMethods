@@ -85,18 +85,29 @@ module Enumerable
     result
   end
 
-  def my_inject(*args)
-    list = is_a?(Range) ? to_a : self
+  def my_inject(*arg)
+    final_value = nil
+    operation = nil
 
-    reduce = args[0] if args[0].is_a?(Integer)
-    operator = args[0].is_a?(Symbol) ? args[0] : args[1]
-
-    if operator
-      list.my_each { |item| reduce = reduce ? reduce.send(operator, item) : item }
-      return reduce
+    if arg.length == 2
+      final_value = arg[0]
+      operation = arg[1]
+      my_each do |element|
+        final_value = final_value.send(operation, element)
+      end
+    elsif arg[0].is_a? Symbol
+      operation = arg[0]
+      my_each do |element|
+        final_value = (final_value ? final_value.send(operation, element) : element)
+      end
+    else
+      final_value = arg[0]
+      my_each do |element|
+        final_value = (final_value ? yield(final_value, element) : element)
+      end
     end
-    list.my_each { |item| reduce = reduce ? yield(reduce, item) : item }
-    reduce
+
+    final_value
   end
 end
 
@@ -104,9 +115,6 @@ def multiply_els(list)
   list.my_inject(:*)
 end
 
-p %w[a b c].my_each { |x| print x, ' -- ' }
-p (1..3).my_each { |x| print x, ' -- ' }
-p %w[A B C].my_each_with_index { |val, index| puts "Element #{val} is on index #{index}" }
 p [1, 2, 3, 4, 5].my_select(&:even?)
 p [nil, true, 99].my_all?
 p [nil, true, 99].my_any?
@@ -114,4 +122,4 @@ p [nil, false].my_none?
 p [1, 2, 4, 2].my_count(2)
 proc2 = proc { |x| x**3 }
 p [1, 2, 3, 4].map(&proc2)
-p (5..10).my_inject(:*)
+p [5, 6, 7, 8, 9].my_inject(:*)
