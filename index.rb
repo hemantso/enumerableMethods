@@ -22,50 +22,48 @@ module Enumerable
     end
   end
 
-  def my_select()
+  def my_select
     return enum_for unless block_given?
 
-    result = []
-    my_each do |elem|
-      result << elem if yield(elem)
-    end
+    filter = []
+    my_each { |element| filter.push(element) if yield(element) }
+    filter
   end
 
-  def my_all?
-    return enum_for unless block_given?
-
-    my_each do |element|
-      return false unless yield(element)
+  def my_all?(*args)
+    lever = true
+    if !args[0].nil?
+      my_each { |element| lever = false unless args[0] == element }
+    elsif !block_given?
+      my_each { |element| lever = false unless element }
+    else
+      my_each { |element| lever = false unless yield(element) }
     end
-    true
+    lever
   end
 
-  def my_any?
-    return enum_for unless block_given?
-
-    my_each do |elem|
-      return true if yield(elem)
+  def my_any?(*arg)
+    lever = false
+    if !arg[0].nil?
+      my_each { |element| lever = true if arg[0] == element }
+    elsif !block_given?
+      my_each { |element| lever = true if element }
+    else
+      my_each { |element| lever = true if yield(element) }
     end
-    false
+    lever
   end
 
-  def my_none?
-    return enum_for unless block_given?
-
-    each do |elem|
-      return false if yield(elem)
-    end
-    true
+  def my_none?(arg = nil, &block)
+    !my_any?(arg, &block)
   end
 
   def my_count(num = nil)
     count = 0
     if num
       my_each { |element| count += 1 if element == num }
-
     elsif !block_given?
       count = length
-
     elsif !num
       my_each { |element| count += 1 if yield element }
     end
@@ -88,7 +86,6 @@ module Enumerable
   def my_inject(*arg)
     final_value = nil
     operation = nil
-
     if arg.length == 2
       final_value = arg[0]
       operation = arg[1]
@@ -106,7 +103,6 @@ module Enumerable
         final_value = (final_value ? yield(final_value, element) : element)
       end
     end
-
     final_value
   end
 end
@@ -115,7 +111,6 @@ def multiply_els(list)
   list.my_inject(:*)
 end
 
-p [1, 2, 3, 4, 5].my_select(&:even?)
 p [nil, true, 99].my_all?
 p [nil, true, 99].my_any?
 p [nil, false].my_none?
