@@ -30,28 +30,28 @@ module Enumerable
     filter
   end
 
-  def my_all?(*args)
-    lever = true
-    if !args[0].nil?
-      my_each { |element| lever = false unless args[0] == element }
+  def my_all?(*arg)
+    result = true
+    if !arg[0].nil?
+      my_each { |i| result = false unless arg[0] === i } # rubocop:disable Style/CaseEquality
     elsif !block_given?
-      my_each { |element| lever = false unless element }
+      my_each { |i| result = false unless i }
     else
-      my_each { |element| lever = false unless yield(element) }
+      my_each { |i| result = false unless yield(i) }
     end
-    lever
+    result
   end
 
   def my_any?(*arg)
-    lever = false
+    result = false
     if !arg[0].nil?
-      my_each { |element| lever = true if arg[0] == element }
+      my_each { |i| result = true if arg[0] === i } # rubocop:disable Style/CaseEquality
     elsif !block_given?
-      my_each { |element| lever = true if element }
+      my_each { |item| result = true if item }
     else
-      my_each { |element| lever = true if yield(element) }
+      my_each { |item| result = true if yield(item) }
     end
-    lever
+    result
   end
 
   def my_none?(arg = nil, &block)
@@ -71,6 +71,8 @@ module Enumerable
   end
 
   def my_map(*procs)
+    return to_enum(:my_map) unless block_given?
+
     result = []
     if procs.count.zero?
       my_each do |elem|
@@ -110,10 +112,12 @@ end
 def multiply_els(list)
   list.my_inject(:*)
 end
-
-p [nil, true, 99].my_all?
-p [nil, true, 99].my_any?
+p [1, 3, 99].my_all?(Integer)
+p %w[dog door rod blade].all?(/d/)
+p [1, 2.5, 'a', 9].my_any?(Integer)
+p %w[dog door rod blade].any?(/o/)
 p [nil, false].my_none?
+p [2, 4, 7, 11].my_map
 p [1, 2, 4, 2].my_count(2)
 proc2 = proc { |x| x**3 }
 p [1, 2, 3, 4].map(&proc2)
