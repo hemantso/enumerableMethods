@@ -129,4 +129,18 @@ describe Enumerable do
       end
     end
   end
+
+  describe '#my_count' do
+    context 'array containing number' do
+      it 'Return number of integer with value 6' do
+        expect(num_arr.my_count(6)).to eql(1)
+      end
+    end
+
+    context 'array containing number' do
+      it 'Return number of element in array' do
+        expect(num_arr.my_count).to eql(4)
+      end
+    end
+  end
 end
