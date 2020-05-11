@@ -1,7 +1,7 @@
 # enumerableMethods
 
 
-> Practice of Second ruby lessons on Microverse school. This small project consist of adding new methods onto the existing Enumerable module.
+> Practice of Second ruby lessons on Microverse school. This small project consist of adding new methods onto the existing Enumerable module. Project build using testing with Rspec (TDD).
 
 ## Built With
 
@@ -12,6 +12,13 @@
 - Install Ruby
 - clone repository from github
 - run the file in the command line by "ruby index.rb"
+
+## Rspec testing (TDD)
+
+- gem install rspec
+- rspec init
+- creted file spec/index_spec.rb
+- for testing run rspec  in terminal
 
 ## Authors
 
