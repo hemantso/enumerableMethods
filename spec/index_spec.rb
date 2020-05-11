@@ -69,4 +69,24 @@ describe Enumerable do
       end
     end
   end
+
+  describe '#my_all?' do
+    context 'array containing number' do
+      it 'Return true if all are numbers' do
+        expect(num_arr.my_all?(Numeric)).to eql(true)
+      end
+    end
+
+    context 'for array containing strings' do
+      it 'Return true if all are strings' do
+        expect(str_arr.my_all?(String)).to eql(true)
+      end
+    end
+
+    context 'array containing number' do
+      it 'Return false if all are not 5' do
+        expect(num_arr.my_all?(5)).to eql(false)
+      end
+    end
+  end
 end
