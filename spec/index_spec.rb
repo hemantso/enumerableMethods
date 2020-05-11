@@ -89,4 +89,44 @@ describe Enumerable do
       end
     end
   end
+
+  describe '#my_any?' do
+    context 'array containing number' do
+      it 'Return true if contain value 6' do
+        expect(num_arr.my_any?(6)).to eql(true)
+      end
+    end
+
+    context 'for array containing strings' do
+      it 'Return true if at least one item is strings' do
+        expect(str_arr.my_any?(String)).to eql(true)
+      end
+    end
+
+    context 'array containing number' do
+      it 'Return false if no numeric value' do
+        expect(str_arr.my_any?(Numeric)).to eql(false)
+      end
+    end
+  end
+
+  describe '#my_none?' do
+    context 'array containing number' do
+      it 'Return true if no integer with value 9' do
+        expect(num_arr.my_none?(9)).to eql(true)
+      end
+    end
+
+    context 'for array containing strings' do
+      it 'Return false if any item have string' do
+        expect(str_arr.my_none?(String)).to eql(false)
+      end
+    end
+
+    context 'array containing number' do
+      it 'Return false if one integer with value 6' do
+        expect(num_arr.my_none?(6)).to eql(false)
+      end
+    end
+  end
 end
