@@ -158,4 +158,18 @@ describe Enumerable do
     end
   end
 
+  describe '#my_inject' do
+    context 'for range' do
+      it 'Return addition of numbers using a symbol' do
+        expect(range.my_inject(:+)).to eql(55)
+      end
+    end
+
+    context 'array containing strings' do
+      it 'Return the longest string' do
+        expect(%w[happy hemant soni].my_inject { |n, m| n.length > m.length ? n : m }).to eql('hemant')
+      end
+    end
+  end
+
 end
