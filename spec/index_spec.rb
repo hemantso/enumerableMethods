@@ -143,4 +143,19 @@ describe Enumerable do
       end
     end
   end
+
+  describe '#my_map' do
+    context 'array containing number' do
+      it 'Return array multiple of 2' do
+        expect(num_arr.my_map { |i| i * 2 }).to eql([4, 12, 14, 16])
+      end
+    end
+
+    context 'if no block is given' do
+      it 'return enumerator when no block is given' do
+        expect(num_arr.my_select).to be_an Enumerator
+      end
+    end
+  end
+
 end
