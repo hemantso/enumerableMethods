@@ -112,13 +112,3 @@ end
 def multiply_els(list)
   list.my_inject(:*)
 end
-p [1, 3, 99].my_all?(Integer)
-p %w[dog door rod blade].all?(/d/)
-p [1, 2.5, 'a', 9].my_any?(Integer)
-p %w[dog door rod blade].any?(/o/)
-p [nil, false].my_none?
-p [2, 4, 7, 11].my_map
-p [1, 2, 4, 2].my_count(2)
-proc2 = proc { |x| x**3 }
-p [1, 2, 3, 4].map(&proc2)
-p [5, 6, 7, 8, 9].my_inject(:*)
